@@ -1,0 +1,63 @@
+﻿<Window x:Class="TagUpdater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TagUpdater"
+        mc:Ignorable="d"
+        Title="MP3 Tag Updater" Height="500" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Input Location -->
+        <Label Grid.Row="0" Grid.Column="0">Folder</Label>
+        <TextBox x:Name="FolderName" Grid.Row="0" Grid.Column="1"
+                 Margin="10, 5" Padding="10, 5"
+                 MouseDoubleClick="FolderName_MouseDoubleClick"/>
+
+        <!-- Album Info -->
+        <Label Grid.Row="1" Grid.Column="0">Artist Name</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="Artist" 
+                 Margin="10, 5" Padding="10, 5"></TextBox>
+
+        <Label Grid.Row="2" Grid.Column="0">Album Name</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="Album" 
+                 Margin="10, 5" Padding="10, 5"></TextBox>
+
+        <Label Grid.Row="3" Grid.Column="0">Year</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="Year" 
+                 Margin="10, 5" Padding="10, 5"></TextBox>
+
+        <Label Grid.Row="4" Grid.Column="0">Album Art</Label>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="AlbumArtPath" 
+                 Margin="10, 5" Padding="10, 5"
+                 MouseDoubleClick="AlbumArtPath_MouseDoubleClick" />
+
+        <!-- Track Names -->
+        <Label Grid.Row="5" Grid.Column="0">Track Names</Label>
+        <TextBox x:Name="TrackNames" Grid.Row="5" Grid.Column="1"
+                 Margin="10, 5" Padding="10, 5"
+                 MinHeight="200" TextWrapping="Wrap" AcceptsReturn="True" />
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                    Grid.Row="6" Grid.ColumnSpan="2">
+            <Button x:Name="Update" Content="Update" Padding="10, 0" Margin="10" FontSize="32" 
+                Click="Update_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
