@@ -39,21 +39,38 @@ public partial class MainWindow : Window
 
     private void UpdateData(string folderName)
     {
-        var files = Directory.GetFiles(folderName, "*.mp3");
+        var files = Directory.GetFiles(folderName, "*.mp3").Order();
 
-        TrackInfo firstTags = Tagger.GetFileTags(files.First());
-        Artist.Text = firstTags.Artist;
-        Album.Text = firstTags.Album;
-        Year.Text = firstTags.Year.ToString();
-        AlbumArtPath.Text = "";
-        TrackNames.Text = $"{firstTags.Title}";
+        TrackInfo? firstTags = Tagger.GetFileTags(files.First());
 
-        UpdateCoverArtImage(firstTags.CoverArt!);
-
-        foreach (var file in files.Skip(1))
+        if (firstTags is not null)
         {
-            var tag = Tagger.GetFileTags(file);
-            TrackNames.Text += $"\n{tag.Title}";
+            Artist.Text = firstTags.Artist;
+            Album.Text = firstTags.Album;
+            Year.Text = firstTags.Year.ToString();
+            AlbumArtPath.Text = "";
+            TrackNames.Text = $"{firstTags.Title}";
+
+            UpdateCoverArtImage(firstTags.CoverArt!);
+
+            foreach (var file in files.Skip(1))
+            {
+                var tag = Tagger.GetFileTags(file);
+                TrackNames.Text += $"\n{tag!.Title}";
+            }
+        }
+        else
+        {
+            Artist.Text = "";
+            Album.Text = "";
+            Year.Text = "";
+            AlbumArtPath.Text = "";
+            UpdateCoverArtImage(null);
+            TrackNames.Text = Path.GetFileNameWithoutExtension(files.FirstOrDefault());
+            foreach (var file in files.Skip(1))
+            {
+                TrackNames.Text += $"\n{Path.GetFileNameWithoutExtension(file)}";
+            }
         }
     }
 
@@ -100,18 +117,14 @@ public partial class MainWindow : Window
         var folderName = FolderName.Text;
         var files = Directory.GetFiles(folderName, "*.mp3");
 
-        foreach (var file in files.Order())
+        var trackNames = TrackNames.Text.Split('\n');
+
+        for (int i = 0; i < files.Count(); i++)
         {
-            TrackInfo info = Tagger.GetFileTags(file);
-            info = info with
-            {
-                Artist = Artist.Text,
-                AlbumArtist = Artist.Text,
-                Album = Album.Text,
-                Year = Int32.Parse(Year.Text),
-                CoverArt = CoverArtBitmap,
-            };
-            Tagger.TagFile(file, info);
+            TrackInfo info = new(Artist.Text, Artist.Text, Album.Text,
+                Int32.Parse(Year.Text), trackNames[i], i+1, true,
+                CoverArtBitmap);
+            Tagger.TagFile(files[i], info);
         }
         MessageBox.Show("Done");
     }
