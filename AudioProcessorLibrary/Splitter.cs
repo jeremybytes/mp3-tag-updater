@@ -7,6 +7,11 @@ public class Splitter
     public static string ExtractWAVTrack(string filePath, TimeSpan start, TimeSpan end, 
         TrackInfo info)
     {
+        if (info.Artist is null)
+            info = info with { Artist = "Unknown" };
+        if (info.Album is null)
+            info = info with { Album = "Unknown" };
+
         string inputPath = Path.GetDirectoryName(filePath)!;
         string outputFileName = $"""{info.TrackNumber:D2} {info.Title}.wav""";
         string outputFilePath = Path.Combine(inputPath,
@@ -24,6 +29,7 @@ public class Splitter
 
     private static string ReplaceForbiddenCharacters(string input)
     {
+
         // This does 9 "Replaces" on each string
         // (artist, album, track). There may be
         // a more efficient way of doing this.

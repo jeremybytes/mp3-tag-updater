@@ -1,4 +1,5 @@
 ﻿using AudioProcessorLibrary;
+using Microsoft.Win32;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -15,7 +16,7 @@ public partial class MainWindow : Window
     private void FolderName_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // Configure open file dialog box
-        var dialog = new Microsoft.Win32.OpenFolderDialog();
+        var dialog = new OpenFolderDialog();
         dialog.InitialDirectory = """C:\Recordings""";
 
         // Show open file dialog box
@@ -52,7 +53,7 @@ public partial class MainWindow : Window
     private void AlbumArtPath_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // Configure open file dialog box
-        var dialog = new Microsoft.Win32.OpenFileDialog();
+        var dialog = new OpenFileDialog();
 
         if (!string.IsNullOrEmpty(FolderName.Text))
             dialog.InitialDirectory = FolderName.Text;
