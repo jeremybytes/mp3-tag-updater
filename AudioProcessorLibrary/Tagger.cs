@@ -1,5 +1,8 @@
 ﻿using Id3;
 using Id3.Frames;
+using Microsoft.VisualBasic;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace AudioProcessorLibrary;
 
@@ -10,9 +13,17 @@ public class Tagger
         using var mp3 = new Mp3(fileName, Mp3Permissions.Read);
         Id3Tag tag = mp3.GetTag(Id3TagFamily.Version2X);
         bool hasCoverArt = tag.Pictures.Count > 0;
+        Bitmap? coverArt = null;
+        if (hasCoverArt)
+        {
+            using MemoryStream stream = new();
+            tag.Pictures.First().SaveImage(stream);
+            using Bitmap temp = new Bitmap(stream);
+            coverArt = new Bitmap(temp);
+        }
         TrackInfo info = new(tag.Artists.Value.FirstOrDefault(),
             tag.Band, tag.Album, tag.Year.Value, tag.Title, tag.Track,
-            hasCoverArt, null);
+            hasCoverArt, coverArt);
         return info;
     }
 
@@ -26,11 +37,13 @@ public class Tagger
         tag.Artists.Value.Add(info.Artist);
         tag.Band = info.AlbumArtist;
         tag.Year = info.Year;
-        if (File.Exists(info.CoverArtPath))
+        if (info.CoverArt is not null)
         {
             tag.Pictures.Clear();
             PictureFrame cover = new();
-            cover.LoadImage(info.CoverArtPath);
+            using MemoryStream stream = new();
+            info.CoverArt.Save(stream, ImageFormat.Jpeg);
+            cover.LoadImage(stream);
             tag.Pictures.Add(cover);
         }
         mp3.WriteTag(tag, WriteConflictAction.Replace);

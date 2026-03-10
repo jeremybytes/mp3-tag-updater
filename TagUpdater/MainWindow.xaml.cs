@@ -1,5 +1,5 @@
 ﻿using AudioProcessorLibrary;
-using Microsoft.Win32;
+using System.Drawing;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -8,6 +8,8 @@ namespace TagUpdater;
 
 public partial class MainWindow : Window
 {
+    Bitmap? CoverArtBitmap = null;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -16,8 +18,11 @@ public partial class MainWindow : Window
     private void FolderName_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // Configure open file dialog box
-        var dialog = new OpenFolderDialog();
-        dialog.InitialDirectory = """C:\Recordings""";
+        var dialog = new Microsoft.Win32.OpenFolderDialog();
+        if (!string.IsNullOrEmpty(FolderName.Text))
+            dialog.InitialDirectory = FolderName.Text;
+        else
+            dialog.InitialDirectory = """C:\Recordings""";
 
         // Show open file dialog box
         bool? result = dialog.ShowDialog();
@@ -36,12 +41,14 @@ public partial class MainWindow : Window
     {
         var files = Directory.GetFiles(folderName, "*.mp3");
 
-        var firstTags = Tagger.GetFileTags(files.First());
+        TrackInfo firstTags = Tagger.GetFileTags(files.First());
         Artist.Text = firstTags.Artist;
         Album.Text = firstTags.Album;
         Year.Text = firstTags.Year.ToString();
         AlbumArtPath.Text = "";
         TrackNames.Text = $"{firstTags.Title}";
+
+        UpdateCoverArtImage(firstTags.CoverArt!);
 
         foreach (var file in files.Skip(1))
         {
@@ -50,15 +57,27 @@ public partial class MainWindow : Window
         }
     }
 
+    private void UpdateCoverArtImage(Bitmap? coverBitmap)
+    {
+        if (coverBitmap is not null)
+        {
+            CoverArtBitmap = coverBitmap;
+            AlbumArtImage.Source = coverBitmap.ToWpfBitmap();
+        }
+        else
+        {
+            CoverArtBitmap = null;
+            AlbumArtImage.Source = null;
+        }
+    }
+
     private void AlbumArtPath_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // Configure open file dialog box
-        var dialog = new OpenFileDialog();
+        var dialog = new Microsoft.Win32.OpenFileDialog();
 
         if (!string.IsNullOrEmpty(FolderName.Text))
             dialog.InitialDirectory = FolderName.Text;
-        else
-            dialog.InitialDirectory = """C:\Recordings""";
 
         dialog.FileName = ""; // Default file name
 
@@ -71,6 +90,8 @@ public partial class MainWindow : Window
             // Open document
             string fileName = dialog.FileName;
             AlbumArtPath.Text = fileName;
+            Bitmap coverArtBitmap = new(fileName);
+            UpdateCoverArtImage(coverArtBitmap);
         }
     }
 
@@ -82,12 +103,13 @@ public partial class MainWindow : Window
         foreach (var file in files.Order())
         {
             TrackInfo info = Tagger.GetFileTags(file);
-            info = info with {
+            info = info with
+            {
                 Artist = Artist.Text,
                 AlbumArtist = Artist.Text,
                 Album = Album.Text,
                 Year = Int32.Parse(Year.Text),
-                CoverArtPath = AlbumArtPath.Text,
+                CoverArt = CoverArtBitmap,
             };
             Tagger.TagFile(file, info);
         }

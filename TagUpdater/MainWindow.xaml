@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TagUpdater"
         mc:Ignorable="d"
-        Title="MP3 Tag Updater" Height="500" Width="800">
+        WindowStartupLocation="CenterScreen"
+        Title="MP3 Tag Updater" Height="710" Width="850">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -20,6 +21,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="310" />
         </Grid.ColumnDefinitions>
 
         <!-- Input Location -->
@@ -27,6 +29,11 @@
         <TextBox x:Name="FolderName" Grid.Row="0" Grid.Column="1"
                  Margin="10, 5" Padding="10, 5"
                  MouseDoubleClick="FolderName_MouseDoubleClick"/>
+
+        <!-- Album Art Bitmap -->
+        <Image x:Name="AlbumArtImage"
+               Grid.Row="0" Grid.RowSpan="5" Grid.Column="2"
+               Margin="5" />
 
         <!-- Album Info -->
         <Label Grid.Row="1" Grid.Column="0">Artist Name</Label>
@@ -49,12 +56,13 @@
         <!-- Track Names -->
         <Label Grid.Row="5" Grid.Column="0">Track Names</Label>
         <TextBox x:Name="TrackNames" Grid.Row="5" Grid.Column="1"
+                 Grid.ColumnSpan="2"
                  Margin="10, 5" Padding="10, 5"
                  MinHeight="200" TextWrapping="Wrap" AcceptsReturn="True" />
 
         <!-- Buttons -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                    Grid.Row="6" Grid.ColumnSpan="2">
+                    Grid.Row="6" Grid.ColumnSpan="3">
             <Button x:Name="Update" Content="Update" Padding="10, 0" Margin="10" FontSize="32" 
                 Click="Update_Click"/>
         </StackPanel>
