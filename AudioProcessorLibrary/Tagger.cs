@@ -21,8 +21,9 @@ public class Tagger
             using Bitmap temp = new Bitmap(stream);
             coverArt = new Bitmap(temp);
         }
-        TrackInfo info = new(tag.Artists.Value.FirstOrDefault(),
-            tag.Band, tag.Album, tag.Year.Value, tag.Title, tag.Track,
+        string artist = tag.Artists?.Value.FirstOrDefault() ?? "";
+        TrackInfo info = new(artist, tag.Band, tag.Album, 
+            tag.Year.Value, tag.Title, tag.Track,
             hasCoverArt, coverArt);
         return info;
     }
