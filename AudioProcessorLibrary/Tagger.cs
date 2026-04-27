@@ -39,6 +39,7 @@ public class Tagger
         tag.Title = info.Title;
         tag.Track = info.TrackNumber;
         tag.Album = info.Album;
+        tag.Artists.Value.Clear();
         tag.Artists.Value.Add(info.Artist);
         tag.Band = info.AlbumArtist;
         tag.Year = info.Year;
